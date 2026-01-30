@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="demo_patient_john" model="hr.hospital.patient">
+            <field name="name">John Doe</field>
+            <field name="gender">male</field>
+            <field name="date_of_birth">1990-01-01</field>
+            <field name="doctor_id" ref="demo_doctor_house"/>
+        </record>
+
+        <record id="demo_patient_jane" model="hr.hospital.patient">
+            <field name="name">Jane Smith</field>
+            <field name="gender">female</field>
+            <field name="date_of_birth">1995-05-15</field>
+            <field name="doctor_id" ref="demo_doctor_wilson"/>
+        </record>
+        
+        <record id="demo_patient_bob" model="hr.hospital.patient">
+            <field name="name">Bob Brown</field>
+            <field name="gender">male</field>
+            <field name="date_of_birth">1985-11-20</field>
+            <field name="doctor_id" ref="demo_doctor_cameron"/>
+        </record>
+    </data>
+</odoo>

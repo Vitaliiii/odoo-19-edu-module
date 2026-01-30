@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="disease_flu" model="hr.hospital.disease">
+            <field name="name">Seasonal Flu</field>
+            <field name="description">Standard viral infection.</field>
+        </record>
+        
+        <record id="disease_allergy" model="hr.hospital.disease">
+            <field name="name">Allergy</field>
+            <field name="description">Seasonal allergy.</field>
+        </record>
+        
+        <record id="disease_migraine" model="hr.hospital.disease">
+            <field name="name">Migraine</field>
+            <field name="description">Chronic headache.</field>
+        </record>
+    </data>
+</odoo>
