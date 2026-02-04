@@ -1,9 +1,10 @@
+# pylint: disable=manifest-required-author
 {
     'name': 'Hospital Automation',
     'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': 'Manage Doctors and Patients',
-    'author': 'Vitaliy',  # Ваше ім’я
+    'author': 'Vitalii',
     'depends': ['base'],
     'data': [
         'security/ir.model.access.csv',
@@ -18,7 +19,6 @@
         'demo/doctor_demo.xml',
         'demo/patient_demo.xml',
     ],
-    'installable': True,
     'application': True,
     'license': 'LGPL-3',
 }
