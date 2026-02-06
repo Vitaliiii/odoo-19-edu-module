@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 {
     'name': "Hospital Management",
     'summary': "Comprehensive hospital and clinic management system",
@@ -13,11 +12,7 @@
     'website': '',
     'category': 'Customizations/Medical',
     'version': '19.0.1.0.0',
-
-    # Базові модулі Odoo, необхідні для роботи
     'depends': ['base'],
-
-    # Файли, які завантажуються завжди
     'data': [
         'security/ir.model.access.csv',
         'views/wizard_views.xml',
@@ -28,11 +23,9 @@
         'views/visit_views.xml',
         'views/hr_hospital_menus.xml',
     ],
-
     'demo': [
         'data/demo_data.xml',
     ],
-
     'installable': True,
     'application': True,
     'auto_install': False,
