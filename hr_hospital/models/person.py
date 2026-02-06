@@ -7,14 +7,12 @@ from odoo.exceptions import ValidationError
 class HospitalPerson(models.AbstractModel):
     _name = 'hr.hospital.person'
     _description = 'Abstract Person'
-    _inherit = ['image.mixin']  # Додає роботу з аватарами
+    _inherit = ['image.mixin']
 
-    # --- ПІБ (Пункт 1.1) ---
     last_name = fields.Char(string='Last Name', required=True)
     first_name = fields.Char(string='First Name', required=True)
     middle_name = fields.Char(string='Middle Name')
     
-    # Поле name (FullName) обов'язкове для Odoo
     name = fields.Char(
         string='Full Name',
         compute='_compute_full_name',
@@ -22,11 +20,9 @@ class HospitalPerson(models.AbstractModel):
         index=True
     )
 
-    # --- Контакти ---
     phone = fields.Char(string='Phone')
     email = fields.Char(string='Email')
     
-    # --- Особисті дані ---
     gender = fields.Selection(
         selection=[
             ('male', 'Male'),
@@ -40,10 +36,9 @@ class HospitalPerson(models.AbstractModel):
     age = fields.Integer(
         string='Age',
         compute='_compute_age',
-        store=True,  # Краще зберігати для фільтрації в звітах
+        store=True,
     )
 
-    # --- Країна та мова ---
     citizenship_country_id = fields.Many2one(
         comodel_name='res.country',
         string='Citizenship'
@@ -52,8 +47,6 @@ class HospitalPerson(models.AbstractModel):
         comodel_name='res.lang',
         string='Preferred Language'
     )
-
-    # --- Обчислювальні методи (Пункт 6.2) ---
 
     @api.depends('last_name', 'first_name', 'middle_name')
     def _compute_full_name(self):
@@ -75,8 +68,6 @@ class HospitalPerson(models.AbstractModel):
             else:
                 rec.age = 0
 
-    # --- Валідація (Пункт 1.1) ---
-
     @api.constrains('email')
     def _check_email_validity(self):
         """Перевірка формату Email через Regex"""
@@ -91,5 +82,4 @@ class HospitalPerson(models.AbstractModel):
         """Перевірка формату телефону (мінімум 10 цифр)"""
         for rec in self:
             if rec.phone:
-                # Видаляємо все крім цифр
                 digits_only = re.sub

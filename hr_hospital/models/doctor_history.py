@@ -1,6 +1,5 @@
 from odoo import models, fields, api
 
-
 class HospitalPatientDoctorHistory(models.Model):
     _name = 'hr.hospital.patient.doctor.history'
     _description = 'Patient Doctor History'
@@ -33,8 +32,6 @@ class HospitalPatientDoctorHistory(models.Model):
         string='Active',
         default=True,
     )
-
-    # --- ВИПРАВЛЕНО: Використовуємо model_create_multi (Пункт 6.4) ---
     
     @api.model_create_multi
     def create(self, vals_list):
@@ -45,18 +42,16 @@ class HospitalPatientDoctorHistory(models.Model):
         for vals in vals_list:
             patient_id = vals.get('patient_id')
             if patient_id:
-                # Шукаємо всі попередні АКТИВНІ записи для цього пацієнта
+
                 old_records = self.search([
                     ('patient_id', '=', patient_id),
                     ('active', '=', True)
                 ])
                 
-                # Якщо знайшли — архівуємо їх (ставимо active=False)
                 if old_records:
                     old_records.write({
                         'active': False,
                         'change_date': fields.Date.context_today(self),
                     })
         
-        # Викликаємо батьківський метод, передаючи весь список
         return super().create(vals_list)

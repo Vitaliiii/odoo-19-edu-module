@@ -9,5 +9,4 @@ class PatientCardExportWizard(models.TransientModel):
     include_diagnoses = fields.Boolean(string='Include Full Diagnoses', default=True)
 
     def action_export(self):
-        # Логіка формування файлу
         return {'type': 'ir.actions.act_window_close'}

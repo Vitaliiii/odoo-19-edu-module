@@ -29,13 +29,12 @@
         'views/hr_hospital_menus.xml',
     ],
 
-    # Демо-дані (завантажуються тільки якщо ввімкнено "Load demo data" при створенні БД)
     'demo': [
         'data/demo_data.xml',
     ],
 
     'installable': True,
-    'application': True,  # Модуль буде відображатися в основному списку Apps
+    'application': True,
     'auto_install': False,
     'license': 'LGPL-3',
 }

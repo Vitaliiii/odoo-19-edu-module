@@ -7,27 +7,21 @@ class HospitalVisit(models.Model):
     _description = 'Patient Visit'
     _order = 'visit_date_planned desc'
 
-    # --- Відображення імені (Виправлення Virtual ID) ---
-
     def _compute_display_name(self):
         """
         Метод формує зрозумілу назву для запису.
         Замість технічного NewId_0x... користувач побачить 'Пацієнт (Дата)'.
         """
         for rec in self:
-            # Форматуємо дату, якщо вона заповнена
             if rec.visit_date_planned:
-                # Наприклад: 2026-02-06 14:30
                 date_str = rec.visit_date_planned.strftime('%Y-%m-%d %H:%M')
             else:
                 date_str = _("New Date")
             
-            # Беремо ім'я пацієнта або пишемо "Новий пацієнт"
             patient_name = rec.patient_id.name or _("New Patient")
             
             rec.display_name = f"{patient_name} ({date_str})"
 
-    # --- Статус та дати (Пункт 2.3) ---
     state = fields.Selection(
         selection=[
             ('planned', 'Planned'),
@@ -47,14 +41,11 @@ class HospitalVisit(models.Model):
         default=fields.Datetime.now,
     )
     
-    # Фактична дата
     visit_date_actual = fields.Datetime(
         string='Actual Visit Date',
         readonly=True,
     )
 
-    # --- Учасники ---
-    # Вимога 8.1: Домен - лікар має мати ліцензію
     doctor_id = fields.Many2one(
         comodel_name='hr.hospital.doctor',
         string='Doctor',
@@ -68,7 +59,6 @@ class HospitalVisit(models.Model):
         required=True,
     )
 
-    # --- Деталі ---
     visit_type = fields.Selection(
         selection=[
             ('first', 'Initial'),
@@ -87,7 +77,6 @@ class HospitalVisit(models.Model):
     
     recommendations = fields.Html(string='Recommendations')
 
-    # --- Фінанси ---
     currency_id = fields.Many2one(
         comodel_name='res.currency',
         string='Currency',
@@ -98,8 +87,6 @@ class HospitalVisit(models.Model):
         currency_field='currency_id',
     )
 
-    # --- Обмеження (Пункт 5.2 та 5.3) ---
-
     @api.constrains('visit_date_planned', 'doctor_id', 'patient_id')
     def _check_unique_visit_per_day(self):
         """Заборона запису одного пацієнта до одного лікаря більше одного разу на день"""
@@ -108,7 +95,6 @@ class HospitalVisit(models.Model):
                 continue
             visit_date = rec.visit_date_planned.date()
             
-            # Шукаємо дублікати на ту саму дату
             domain = [
                 ('id', '!=', rec.id),
                 ('doctor_id', '=', rec.doctor_id.id),
@@ -133,8 +119,6 @@ class HospitalVisit(models.Model):
             if rec.diagnosis_ids:
                 raise UserError(_("You cannot delete a visit that already has diagnoses recorded."))
         return super().unlink()
-
-    # --- Методи Onchange (Пункт 6.3) ---
 
     @api.onchange('patient_id')
     def _onchange_patient_id(self):

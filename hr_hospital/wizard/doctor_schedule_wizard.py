@@ -22,7 +22,7 @@ class DoctorScheduleWizard(models.TransientModel):
         schedule_obj = self.env['hr.hospital.doctor.schedule']
         
         for week in range(self.weeks_count):
-            for day in range(5):  # Пн-Пт
+            for day in range(5):
                 current_date = self.week_start_date + timedelta(weeks=week, days=day)
                 schedule_obj.create({
                     'doctor_id': self.doctor_id.id,

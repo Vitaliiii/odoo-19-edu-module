@@ -12,13 +12,11 @@ class MassReassignDoctorWizard(models.TransientModel):
     @api.onchange('old_doctor_id')
     def _onchange_old_doctor_id(self):
         if self.old_doctor_id:
-            # Автоматично підтягуємо всіх пацієнтів цього лікаря
             patients = self.env['hr.hospital.patient'].search([('doctor_id', '=', self.old_doctor_id.id)])
             self.patient_ids = [(6, 0, patients.ids)]
 
     def action_reassign(self):
         self.ensure_one()
         if self.patient_ids:
-            # Метод write у моделі patient автоматично створить записи в історії
             self.patient_ids.write({'doctor_id': self.new_doctor_id.id})
         return {'type': 'ir.actions.act_window_close'}

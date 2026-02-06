@@ -4,9 +4,8 @@ from odoo import models, fields
 class HospitalDoctorSchedule(models.Model):
     _name = 'hr.hospital.doctor.schedule'
     _description = 'Doctor Schedule'
-    _rec_name = 'doctor_id'  # Для зручного відображення в хлібних крихтах
+    _rec_name = 'doctor_id'
 
-    # Вимога 8.1: При створенні розкладу показувати тільки лікарів з заповненою спеціальністю
     doctor_id = fields.Many2one(
         comodel_name='hr.hospital.doctor',
         string='Doctor',
@@ -14,8 +13,6 @@ class HospitalDoctorSchedule(models.Model):
         domain="[('specialty_id', '!=', False)]"
     )
     
-    # День тижня (0 = Понеділок, 6 = Неділя)
-    # Використовується для повторюваних графіків
     day_of_week = fields.Selection(
         selection=[
             ('0', 'Monday'),
@@ -29,11 +26,8 @@ class HospitalDoctorSchedule(models.Model):
         string='Day of Week',
     )
     
-    # Конкретна дата (має пріоритет над днем тижня або використовується для винятків)
     schedule_date = fields.Date(string='Specific Date')
     
-    # Час у форматі Float (наприклад, 14.5 = 14:30)
-    # У XML views до цих полів варто додати widget="float_time"
     time_start = fields.Float(
         string='Start Time',
         required=True,

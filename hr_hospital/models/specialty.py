@@ -1,11 +1,9 @@
 from odoo import models, fields
 
-
 class HospitalSpecialty(models.Model):
     _name = 'hr.hospital.specialty'
     _description = 'Doctor Specialty'
     
-    # Поле name є стандартним для відображення в Many2one (rec_name)
     name = fields.Char(
         string='Specialty Name',
         required=True,
@@ -26,7 +24,6 @@ class HospitalSpecialty(models.Model):
         help="If unchecked, this specialty will be hidden from selection."
     )
     
-    # Зв'язок (Пункт 3.2): Список лікарів з цією спеціальністю
     doctor_ids = fields.One2many(
         comodel_name='hr.hospital.doctor',
         inverse_name='specialty_id',

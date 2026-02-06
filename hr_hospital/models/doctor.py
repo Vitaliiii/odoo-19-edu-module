@@ -42,7 +42,6 @@ class HospitalDoctor(models.Model):
         compute='_compute_experience_years',
     )
     
-    # ВИПРАВЛЕНО: Selection замість Float для роботи з widget="priority"
     rating = fields.Selection(
         selection=[
             ('0', 'No Rating'),

@@ -1,13 +1,11 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
-
 class HospitalPatient(models.Model):
     _name = 'hr.hospital.patient'
-    _inherit = ['hr.hospital.person']  # Наслідуємо ПІБ, вік, контакти
+    _inherit = ['hr.hospital.person']
     _description = 'Hospital Patient'
 
-    # --- Нові поля (Пункт 2.1) ---
     doctor_id = fields.Many2one(
         comodel_name='hr.hospital.doctor',
         string='Personal Doctor',
@@ -44,7 +42,6 @@ class HospitalPatient(models.Model):
 
     insurance_policy_number = fields.Char(string='Policy Number')
 
-    # Зв'язок з історією змін лікарів (Пункт 3.4)
     doctor_history_ids = fields.One2many(
         comodel_name='hr.hospital.patient.doctor.history',
         inverse_name='patient_id',
@@ -52,7 +49,6 @@ class HospitalPatient(models.Model):
         readonly=True,
     )
 
-    # --- Python Обмеження (Пункт 5.2) ---
     @api.constrains('date_of_birth')
     def _check_patient_age(self):
         """Перевірка, що вік пацієнта більше 0 (дата народження не в майбутньому)"""
@@ -60,19 +56,16 @@ class HospitalPatient(models.Model):
             if rec.date_of_birth and rec.date_of_birth > fields.Date.today():
                 raise ValidationError(_("Patient's date of birth cannot be in the future!"))
 
-    # --- Методи Onchange (Пункт 6.3) ---
     @api.onchange('citizenship_country_id')
     def _onchange_citizenship_suggest_lang(self):
         """Пропонуємо мову на основі країни громадянства"""
         if self.citizenship_country_id:
-            # Пошук мови за кодом країни (напр. 'UA' -> 'uk_UA')
             lang = self.env['res.lang'].search([
                 ('code', 'ilike', self.citizenship_country_id.code)
             ], limit=1)
             if lang:
                 self.language_id = lang
 
-    # --- Перевизначення методів (Пункт 6.4) ---
     def write(self, vals):
         """
         При зміні персонального лікаря (doctor_id) 
@@ -80,10 +73,7 @@ class HospitalPatient(models.Model):
         """
         if 'doctor_id' in vals:
             for rec in self:
-                # Перевіряємо, чи лікар дійсно відрізняється від поточного
                 if rec.doctor_id.id != vals.get('doctor_id'):
-                    # Створюємо запис в історії
-                    # Логіка деактивації старого запису лежить в create моделі історії
                     self.env['hr.hospital.patient.doctor.history'].create({
                         'patient_id': rec.id,
                         'doctor_id': vals.get('doctor_id'),

@@ -7,10 +7,6 @@ class HospitalDiagnosis(models.Model):
     _name = 'hr.hospital.diagnosis'
     _description = 'Medical Diagnosis'
 
-    # --- Зв'язки ---
-    
-    # Вимога 8.1: Домен - показувати тільки завершені візити
-    # Вимога 3.1: ondelete='cascade'
     visit_id = fields.Many2one(
         comodel_name='hr.hospital.visit',
         string='Visit',
@@ -19,7 +15,6 @@ class HospitalDiagnosis(models.Model):
         domain="[('state', '=', 'done')]"
     )
 
-    # Вимога 8.1: Домен - показувати тільки заразні хвороби з високим/критичним ступенем
     disease_id = fields.Many2one(
         comodel_name='hr.hospital.disease',
         string='Disease',
@@ -27,7 +22,6 @@ class HospitalDiagnosis(models.Model):
         domain="[('is_infectious', '=', True), ('severity', 'in', ['high', 'critical'])]"
     )
 
-    # --- Опис ---
     description = fields.Text(string='Description')
     treatment_notes = fields.Html(string='Treatment')
     
@@ -41,7 +35,6 @@ class HospitalDiagnosis(models.Model):
         string='Severity',
     )
 
-    # --- Блок затвердження (Approval) ---
     is_approved = fields.Boolean(
         string='Approved',
         default=False,
@@ -56,8 +49,6 @@ class HospitalDiagnosis(models.Model):
         readonly=True,
     )
 
-    # --- Методи Бізнес-логіки (Пункт 6) ---
-
     def action_approve(self):
         """
         Затверджує діагноз. Перевіряє, чи користувач пов'язаний з лікарем.
@@ -66,7 +57,6 @@ class HospitalDiagnosis(models.Model):
             if rec.is_approved:
                 raise UserError(_("Diagnosis is already approved."))
 
-            # Шукаємо лікаря, який прив'язаний до поточного користувача
             current_doctor = self.env['hr.hospital.doctor'].search(
                 [('user_id', '=', self.env.user.id)], limit=1
             )
@@ -74,14 +64,11 @@ class HospitalDiagnosis(models.Model):
             if not current_doctor:
                 raise UserError(_("Your user is not linked to any Doctor profile."))
 
-            # Оновлюємо поля
             rec.write({
                 'is_approved': True,
                 'approved_by_id': current_doctor.id,
                 'approved_date': fields.Datetime.now()
             })
-
-    # --- Динамічні домени (Пункт 8.2) ---
 
     @api.onchange('visit_id')
     def _onchange_visit_domain(self):

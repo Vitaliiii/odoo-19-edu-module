@@ -8,11 +8,9 @@ class HospitalContactPerson(models.Model):
 
     description = fields.Text(string='Notes')
     
-    # Додаємо поле, щоб було куди застосувати домен
     patient_ids = fields.One2many(
         comodel_name='hr.hospital.patient',
         inverse_name='contact_person_id',
         string='Patients',
-        # Тільки алергіки
         domain="[('allergies', '!=', False)]"
     )
