@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <menuitem id="menu_hr_hospital_root"
-              name="Hospital"
-              web_icon="hr_hospital,static/description/icon.png"
-              sequence="10"/>
+    <menuitem id="menu_hr_hospital_root" name="Hospital" sequence="10"/>
 
-    <menuitem id="menu_hr_hospital_patient"
-              name="Patients"
-              parent="menu_hr_hospital_root"
-              sequence="10"/>
+    <menuitem id="menu_hr_hospital_operations" name="Operations" parent="menu_hr_hospital_root" sequence="10"/>
+    <menuitem id="menu_hr_hospital_catalog" name="Catalog" parent="menu_hr_hospital_root" sequence="20"/>
+    <menuitem id="menu_hr_hospital_config" name="Configuration" parent="menu_hr_hospital_root" sequence="100"/>
 
-    <menuitem id="menu_hr_hospital_doctor"
-              name="Doctors"
-              parent="menu_hr_hospital_root"
-              sequence="20"/>
-              
-    <menuitem id="menu_hr_hospital_config"
-              name="Configuration"
-              parent="menu_hr_hospital_root"
-              sequence="30"/>
+    <menuitem id="menu_hospital_visit" name="Visits" parent="menu_hr_hospital_operations" action="action_hr_hospital_visit" sequence="10"/>
+    <menuitem id="menu_hospital_doctor" name="Doctors" parent="menu_hr_hospital_catalog" action="action_hr_hospital_doctor" sequence="10"/>
+    <menuitem id="menu_hospital_patient" name="Patients" parent="menu_hr_hospital_catalog" action="action_hr_hospital_patient" sequence="20"/>
+    
+    <menuitem id="menu_wizard_reassign" 
+              name="Mass Reassign Doctor" 
+              parent="menu_hr_hospital_operations" 
+              action="action_mass_reassign_doctor_wizard" 
+              sequence="50"/>
+
+    <menuitem id="menu_wizard_schedule" 
+              name="Generate Schedule" 
+              parent="menu_hr_hospital_operations" 
+              action="action_doctor_schedule_wizard" 
+              sequence="60"/>
+
+    <menuitem id="menu_hospital_disease" name="Diseases" parent="menu_hr_hospital_config" action="action_hr_hospital_disease" sequence="10"/>
+    <menuitem id="menu_hospital_specialty" name="Specialties" parent="menu_hr_hospital_config" action="action_hr_hospital_specialty" sequence="20"/>
 </odoo>

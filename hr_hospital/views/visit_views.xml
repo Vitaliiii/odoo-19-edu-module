@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_hr_hospital_visit_tree" model="ir.ui.view">
-        <field name="name">hr.hospital.visit.tree</field>
+    <record id="view_hr_hospital_visit_list" model="ir.ui.view">
+        <field name="name">hr.hospital.visit.list</field>
         <field name="model">hr.hospital.visit</field>
         <field name="arch" type="xml">
-            <list string="Visits">
-                <field name="visit_date"/>
+            <list decoration-info="state == 'planned'" decoration-success="state == 'done'" decoration-muted="state == 'cancelled'">
+                <field name="visit_date_planned"/>
                 <field name="doctor_id"/>
                 <field name="patient_id"/>
+                <field name="visit_type"/>
+                <field name="state" widget="badge"/>
             </list>
         </field>
     </record>
@@ -16,17 +18,52 @@
         <field name="name">hr.hospital.visit.form</field>
         <field name="model">hr.hospital.visit</field>
         <field name="arch" type="xml">
-            <form string="Visit">
+            <form>
+                <header>
+                    <button name="%(action_reschedule_visit_wizard)d" string="Reschedule" type="action" class="btn-primary" invisible="state != 'planned'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="planned,done,cancelled"/>
+                </header>
                 <sheet>
                     <group>
-                        <field name="visit_date"/>
-                        <field name="doctor_id"/>
-                        <field name="patient_id"/>
-                        <field name="diagnosis"/>
+                        <group string="Planning">
+                            <field name="visit_date_planned"/>
+                            <field name="visit_date_actual" readonly="state != 'done'"/>
+                            <field name="visit_type"/>
+                        </group>
+                        <group string="Participants">
+                            <field name="doctor_id"/>
+                            <field name="patient_id"/>
+                        </group>
                     </group>
+                    <notebook>
+                        <page string="Diagnoses">
+                            <field name="diagnosis_ids">
+                                <list editable="bottom">
+                                    <field name="disease_id"/>
+                                    <field name="severity"/>
+                                    <field name="is_approved" readonly="1"/>
+                                    <button name="action_approve" string="Approve" type="object" icon="fa-check" invisible="is_approved"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Recommendations">
+                            <field name="recommendations" widget="html"/>
+                        </page>
+                        <page string="Billing">
+                            <group>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
     </record>
-    
-    </odoo>
+
+    <record id="action_hr_hospital_visit" model="ir.actions.act_window">
+        <field name="name">Patient Visits</field>
+        <field name="res_model">hr.hospital.visit</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

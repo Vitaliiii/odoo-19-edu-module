@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_reschedule_visit_wizard_form" model="ir.ui.view">
+        <field name="name">hr.hospital.reschedule.visit.wizard.form</field>
+        <field name="model">hr.hospital.reschedule.visit.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reschedule Visit">
+                <group>
+                    <field name="visit_id" readonly="1" force_save="1"/>
+                    <field name="new_date"/>
+                    <field name="reason"/>
+                </group>
+                <footer>
+                    <button name="action_reschedule" string="Confirm Reschedule" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_reschedule_visit_wizard" model="ir.actions.act_window">
+        <field name="name">Reschedule Visit</field>
+        <field name="res_model">hr.hospital.reschedule.visit.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="view_mass_reassign_doctor_wizard_form" model="ir.ui.view">
+        <field name="name">hr.hospital.mass.reassign.doctor.wizard.form</field>
+        <field name="model">hr.hospital.mass.reassign.doctor.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Mass Reassign Doctor">
+                <group>
+                    <field name="old_doctor_id"/>
+                    <field name="new_doctor_id"/>
+                    <field name="reason"/>
+                </group>
+                <field name="patient_ids" widget="many2many_tags" placeholder="Select patients..."/>
+                <footer>
+                    <button name="action_reassign" string="Reassign All" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mass_reassign_doctor_wizard" model="ir.actions.act_window">
+        <field name="name">Mass Reassign Doctor</field>
+        <field name="res_model">hr.hospital.mass.reassign.doctor.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="view_doctor_schedule_wizard_form" model="ir.ui.view">
+        <field name="name">hr.hospital.doctor.schedule.wizard.form</field>
+        <field name="model">hr.hospital.doctor.schedule.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate Schedule">
+                <group>
+                    <group>
+                        <field name="doctor_id"/>
+                        <field name="week_start_date"/>
+                    </group>
+                    <group>
+                        <field name="weeks_count"/>
+                        <field name="schedule_type"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="time_start" widget="float_time"/>
+                    <field name="time_end" widget="float_time"/>
+                </group>
+                <footer>
+                    <button name="action_generate_schedule" string="Generate" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_doctor_schedule_wizard" model="ir.actions.act_window">
+        <field name="name">Generate Doctor Schedule</field>
+        <field name="res_model">hr.hospital.doctor.schedule.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_hr_hospital_disease_tree" model="ir.ui.view">
-        <field name="name">hr.hospital.disease.tree</field>
+    <record id="view_hr_hospital_disease_list" model="ir.ui.view">
+        <field name="name">hr.hospital.disease.list</field>
         <field name="model">hr.hospital.disease</field>
         <field name="arch" type="xml">
-            <list string="Diseases">
+            <list>
                 <field name="name"/>
+                <field name="icd10_code"/>
+                <field name="severity" widget="badge" decoration-danger="severity == 'critical'" decoration-warning="severity == 'high'"/>
+                <field name="is_infectious"/>
+                <field name="parent_id"/>
             </list>
         </field>
     </record>
@@ -14,26 +18,35 @@
         <field name="name">hr.hospital.disease.form</field>
         <field name="model">hr.hospital.disease</field>
         <field name="arch" type="xml">
-            <form string="Disease">
+            <form>
                 <sheet>
                     <group>
-                        <field name="name"/>
-                        <field name="description"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="parent_id"/>
+                            <field name="icd10_code"/>
+                        </group>
+                        <group>
+                            <field name="severity"/>
+                            <field name="is_infectious"/>
+                        </group>
                     </group>
+                    <notebook>
+                        <page string="Symptoms">
+                            <field name="symptoms"/>
+                        </page>
+                        <page string="Spread Regions">
+                            <field name="region_ids" widget="many2many_tags"/>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
     </record>
 
     <record id="action_hr_hospital_disease" model="ir.actions.act_window">
-        <field name="name">Disease Types</field>
+        <field name="name">Diseases Catalog</field>
         <field name="res_model">hr.hospital.disease</field>
         <field name="view_mode">list,form</field>
     </record>
-
-    <menuitem id="menu_disease_action"
-              name="Disease Types"
-              parent="menu_hr_hospital_config"
-              action="action_hr_hospital_disease"
-              sequence="10"/>
 </odoo>

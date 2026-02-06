@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_hr_hospital_patient_tree" model="ir.ui.view">
-        <field name="name">hr.hospital.patient.tree</field>
+    <record id="view_hr_hospital_patient_list" model="ir.ui.view">
+        <field name="name">hr.hospital.patient.list</field>
         <field name="model">hr.hospital.patient</field>
         <field name="arch" type="xml">
-            <list string="Patients">
+            <list>
                 <field name="name"/>
-                <field name="gender"/>
                 <field name="date_of_birth"/>
+                <field name="age"/>
+                <field name="blood_type"/>
                 <field name="doctor_id"/>
             </list>
         </field>
@@ -17,17 +18,46 @@
         <field name="name">hr.hospital.patient.form</field>
         <field name="model">hr.hospital.patient</field>
         <field name="arch" type="xml">
-            <form string="Patient">
+            <form>
                 <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_128'}"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
                     <group>
-                        <field name="name"/>
-                        <field name="date_of_birth"/>
-                        <field name="gender"/>
-                        <field name="doctor_id"/>
+                        <group string="Basic Info">
+                            <field name="last_name"/>
+                            <field name="first_name"/>
+                            <field name="middle_name"/>
+                            <field name="date_of_birth"/>
+                            <field name="age"/>
+                            <field name="gender"/>
+                        </group>
+                        <group string="Medical Data">
+                            <field name="blood_type"/>
+                            <field name="doctor_id"/>
+                            <field name="allergies"/>
+                            <field name="contact_person_id"/>
+                        </group>
                     </group>
-                    <group string="Medical History">
-                        <field name="disease_ids" widget="many2many_tags"/>
-                    </group>
+                    <notebook>
+                        <page string="Doctor History">
+                            <field name="doctor_history_ids">
+                                <list>
+                                    <field name="doctor_id"/>
+                                    <field name="appointment_date"/>
+                                    <field name="change_date"/>
+                                    <field name="active" widget="boolean_button"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Insurance">
+                            <group>
+                                <field name="insurance_partner_id"/>
+                                <field name="insurance_policy_number"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -38,10 +68,4 @@
         <field name="res_model">hr.hospital.patient</field>
         <field name="view_mode">list,form</field>
     </record>
-
-    <menuitem id="menu_patient_action"
-              name="Patients"
-              parent="menu_hr_hospital_patient"
-              action="action_hr_hospital_patient"
-              sequence="10"/>
 </odoo>

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_hr_hospital_doctor_tree" model="ir.ui.view">
-        <field name="name">hr.hospital.doctor.tree</field>
+    <record id="view_hr_hospital_doctor_list" model="ir.ui.view">
+        <field name="name">hr.hospital.doctor.list</field>
         <field name="model">hr.hospital.doctor</field>
         <field name="arch" type="xml">
-            <list string="Doctors">
+            <list>
                 <field name="name"/>
-                <field name="specialization"/>
-                <field name="mentor_id"/>
+                <field name="specialty_id"/>
+                <field name="license_number"/>
+                <field name="rating" widget="priority"/>
+                <field name="is_intern" widget="boolean_toggle"/>
             </list>
         </field>
     </record>
@@ -16,16 +18,39 @@
         <field name="name">hr.hospital.doctor.form</field>
         <field name="model">hr.hospital.doctor</field>
         <field name="arch" type="xml">
-            <form string="Doctor">
+            <form>
                 <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_128'}"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
                     <group>
-                        <field name="name"/>
-                        <field name="specialization"/>
-                        <field name="mentor_id"/>
+                        <group string="Identity">
+                            <field name="last_name"/>
+                            <field name="first_name"/>
+                            <field name="middle_name"/>
+                            <field name="gender"/>
+                        </group>
+                        <group string="Professional">
+                            <field name="specialty_id"/>
+                            <field name="license_number"/>
+                            <field name="license_date"/>
+                            <field name="experience_years"/>
+                            <field name="is_intern"/>
+                            <field name="mentor_id" invisible="not is_intern" required="is_intern"/>
+                        </group>
                     </group>
                     <notebook>
-                        <page string="Patients">
-                            <field name="patient_ids"/>
+                        <page string="Schedule">
+                            <field name="schedule_ids">
+                                <list editable="bottom">
+                                    <field name="day_of_week"/>
+                                    <field name="schedule_date"/>
+                                    <field name="time_start" widget="float_time"/>
+                                    <field name="time_end" widget="float_time"/>
+                                    <field name="activity_type"/>
+                                </list>
+                            </field>
                         </page>
                     </notebook>
                 </sheet>
@@ -38,10 +63,4 @@
         <field name="res_model">hr.hospital.doctor</field>
         <field name="view_mode">list,form</field>
     </record>
-
-    <menuitem id="menu_doctor_action"
-              name="Doctors"
-              parent="menu_hr_hospital_doctor"
-              action="action_hr_hospital_doctor"
-              sequence="10"/>
 </odoo>
