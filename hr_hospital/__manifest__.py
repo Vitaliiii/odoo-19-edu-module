@@ -11,7 +11,7 @@
     'author': "Vitalii",
     'website': '',
     'category': 'Customizations/Medical',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'depends': ['base'],
     'data': [
         'security/ir.model.access.csv',
@@ -30,4 +30,5 @@
     'application': True,
     'auto_install': False,
     'license': 'LGPL-3',
+    'images': ['static/description/icon.png'],
 }

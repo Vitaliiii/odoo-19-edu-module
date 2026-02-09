@@ -42,17 +42,10 @@ class HospitalDoctor(models.Model):
         compute='_compute_experience_years',
     )
     
-    rating = fields.Selection(
-        selection=[
-            ('0', 'No Rating'),
-            ('1', 'Very Low'),
-            ('2', 'Low'),
-            ('3', 'Average'),
-            ('4', 'High'),
-            ('5', 'Excellent'),
-        ],
+    rating = fields.Float(
         string='Rating',
-        default='0',
+        default=0.0,
+        help="Doctor's rating from 0.00 to 5.00"
     )
     
     education_country_id = fields.Many2one(
@@ -73,8 +66,16 @@ class HospitalDoctor(models.Model):
     )
 
     _sql_constraints = [
-        ('unique_license_number', 'UNIQUE(license_number)', 
-         'The license number must be unique!'),
+        (
+            'unique_license_number',          # 1. Назва
+            'UNIQUE(license_number)',         # 2. SQL
+            'The license number must be unique!' # 3. Повідомлення
+        ),
+        (
+            'check_rating_range',             
+            'CHECK(rating >= 0 AND rating <= 5)', 
+            'Rating must be between 0.00 and 5.00!'
+        ),
     ]
 
     @api.depends('license_date')

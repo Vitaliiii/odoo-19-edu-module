@@ -50,3 +50,11 @@ class HospitalDoctorSchedule(models.Model):
         default='work',
         required=True,
     )
+    
+    _sql_constraints = [
+        (
+            'check_time_interval',           # Унікальна назва обмеження
+            'CHECK(time_end > time_start)',  # SQL перевірка
+            'End time must be greater than start time!' # Повідомлення про помилку
+        )
+    ]

@@ -82,4 +82,8 @@ class HospitalPerson(models.AbstractModel):
         """Перевірка формату телефону (мінімум 10 цифр)"""
         for rec in self:
             if rec.phone:
-                digits_only = re.sub
+                # re.sub(r'\D', '', text) замінює все, що НЕ є цифрою (\D), на пустоту
+                digits_only = re.sub(r'\D', '', rec.phone)
+                
+                if len(digits_only) < 10:
+                    raise ValidationError(_("Phone number must contain at least 10 digits!"))

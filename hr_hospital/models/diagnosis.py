@@ -7,6 +7,10 @@ class HospitalDiagnosis(models.Model):
     _name = 'hr.hospital.diagnosis'
     _description = 'Medical Diagnosis'
 
+    date_of_diagnosis = fields.Date(
+        string='Date of Diagnosis', 
+        default=fields.Date.context_today
+    )
     visit_id = fields.Many2one(
         comodel_name='hr.hospital.visit',
         string='Visit',
@@ -86,3 +90,11 @@ class HospitalDiagnosis(models.Model):
                 ]
             }
         }
+        
+    @api.constrains('date_of_diagnosis', 'visit_id')
+    def _check_diagnosis_date(self):
+        for rec in self:
+            if rec.visit_id and rec.date_of_diagnosis:
+                # Дата діагнозу не може бути раніше дати візиту
+                if rec.date_of_diagnosis < rec.visit_id.visit_date.date():
+                    raise ValidationError(_("The diagnosis date cannot be earlier than the visit date!"))
