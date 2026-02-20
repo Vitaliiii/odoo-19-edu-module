@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_hr_hospital_patient_list" model="ir.ui.view">
-        <field name="name">hr.hospital.patient.list</field>
+
+    <record id="view_hr_hospital_patient_search" model="ir.ui.view">
+        <field name="name">hr.hospital.patient.search</field>
         <field name="model">hr.hospital.patient</field>
         <field name="arch" type="xml">
-            <list>
-                <field name="name"/>
-                <field name="date_of_birth"/>
-                <field name="age"/>
-                <field name="blood_type"/>
+            <search>
+                <field name="name" filter_domain="['|', '|', ('first_name', 'ilike', self), ('last_name', 'ilike', self), ('middle_name', 'ilike', self)]"/>
+                <field name="phone"/>
                 <field name="doctor_id"/>
-            </list>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Doctor" name="group_by_doctor" context="{'group_by': 'doctor_id'}"/>
+                    <filter string="Blood Type" name="group_by_blood" context="{'group_by': 'blood_type'}"/>
+                </group>
+            </search>
         </field>
     </record>
 
@@ -19,7 +23,16 @@
         <field name="model">hr.hospital.patient</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="action_create_visit" string="Schedule Appointment" type="object" class="btn-primary"/>
+                </header>
                 <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button name="action_view_visits" type="object" class="oe_stat_button" icon="fa-calendar">
+                            <field name="visit_count" widget="statinfo" string="Visits"/>
+                        </button>
+                    </div>
+
                     <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_128'}"/>
                     <div class="oe_title">
                         <h1><field name="name" readonly="1"/></h1>
@@ -30,8 +43,9 @@
                             <field name="first_name"/>
                             <field name="middle_name"/>
                             <field name="date_of_birth"/>
-                            <field name="age"/>
                             <field name="gender"/>
+                            <field name="phone"/>
+                            <field name="email"/>
                         </group>
                         <group string="Medical Data">
                             <field name="blood_type"/>
@@ -41,13 +55,23 @@
                         </group>
                     </group>
                     <notebook>
+                        <page string="Diagnosis History">
+                            <field name="diagnosis_ids" readonly="1">
+                                <list>
+                                    <field name="date_of_diagnosis"/>
+                                    <field name="disease_id"/>
+                                    <field name="severity" widget="badge" decoration-danger="severity in ('high', 'critical')"/>
+                                    <field name="treatment_notes" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
                         <page string="Doctor History">
                             <field name="doctor_history_ids">
                                 <list>
                                     <field name="doctor_id"/>
                                     <field name="appointment_date"/>
                                     <field name="change_date"/>
-                                    <field name="active" widget="boolean_button"/>
+                                    <field name="active" widget="boolean_toggle"/>
                                 </list>
                             </field>
                         </page>
@@ -63,9 +87,24 @@
         </field>
     </record>
 
+    <record id="view_hr_hospital_patient_list" model="ir.ui.view">
+        <field name="name">hr.hospital.patient.list</field>
+        <field name="model">hr.hospital.patient</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="date_of_birth"/>
+                <field name="blood_type"/>
+                <field name="doctor_id"/>
+            </list>
+        </field>
+    </record>
+
     <record id="action_hr_hospital_patient" model="ir.actions.act_window">
         <field name="name">Patients</field>
         <field name="res_model">hr.hospital.patient</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_hr_hospital_patient_search"/>
     </record>
 </odoo>

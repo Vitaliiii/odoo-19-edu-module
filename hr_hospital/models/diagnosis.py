@@ -1,6 +1,6 @@
 from datetime import timedelta
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class HospitalDiagnosis(models.Model):
@@ -18,12 +18,26 @@ class HospitalDiagnosis(models.Model):
         ondelete='cascade',
         domain="[('state', '=', 'done')]"
     )
+    
+    patient_id = fields.Many2one(
+        related='visit_id.patient_id',
+        string='Patient',
+        store=True,
+        readonly=True
+    )
 
     disease_id = fields.Many2one(
         comodel_name='hr.hospital.disease',
         string='Disease',
         required=True,
         domain="[('is_infectious', '=', True), ('severity', 'in', ['high', 'critical'])]"
+    )
+
+    disease_type_id = fields.Many2one(
+        comodel_name='hr.hospital.disease',
+        related='disease_id.parent_id',
+        string='Disease Type',
+        store=True,
     )
 
     description = fields.Text(string='Description')
@@ -39,35 +53,21 @@ class HospitalDiagnosis(models.Model):
         string='Severity',
     )
 
-    is_approved = fields.Boolean(
-        string='Approved',
-        default=False,
-    )
-    approved_by_id = fields.Many2one(
-        comodel_name='hr.hospital.doctor',
-        string='Approved By',
-        readonly=True,
-    )
-    approved_date = fields.Datetime(
-        string='Approval Date',
-        readonly=True,
-    )
+    is_approved = fields.Boolean(string='Approved', default=False)
+    approved_by_id = fields.Many2one('hr.hospital.doctor', string='Approved By', readonly=True)
+    approved_date = fields.Datetime(string='Approval Date', readonly=True)
 
     def action_approve(self):
-        """
-        Затверджує діагноз. Перевіряє, чи користувач пов'язаний з лікарем.
-        """
+        current_doctor = self.env['hr.hospital.doctor'].search(
+            [('user_id', '=', self.env.user.id)], limit=1
+        )
+        if not current_doctor:
+            raise UserError(_("Your user is not linked to any Doctor profile."))
+
         for rec in self:
             if rec.is_approved:
                 raise UserError(_("Diagnosis is already approved."))
-
-            current_doctor = self.env['hr.hospital.doctor'].search(
-                [('user_id', '=', self.env.user.id)], limit=1
-            )
-
-            if not current_doctor:
-                raise UserError(_("Your user is not linked to any Doctor profile."))
-
+            
             rec.write({
                 'is_approved': True,
                 'approved_by_id': current_doctor.id,
@@ -76,12 +76,7 @@ class HospitalDiagnosis(models.Model):
 
     @api.onchange('visit_id')
     def _onchange_visit_domain(self):
-        """
-        Динамічно обмежує вибір візитів:
-        тільки завершені візити за останні 30 днів.
-        """
         date_threshold = fields.Datetime.now() - timedelta(days=30)
-        
         return {
             'domain': {
                 'visit_id': [
@@ -95,6 +90,5 @@ class HospitalDiagnosis(models.Model):
     def _check_diagnosis_date(self):
         for rec in self:
             if rec.visit_id and rec.date_of_diagnosis:
-                # Дата діагнозу не може бути раніше дати візиту
-                if rec.date_of_diagnosis < rec.visit_id.visit_date.date():
+                if rec.date_of_diagnosis < rec.visit_id.visit_date_planned.date():
                     raise ValidationError(_("The diagnosis date cannot be earlier than the visit date!"))

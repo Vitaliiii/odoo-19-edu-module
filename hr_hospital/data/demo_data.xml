@@ -11,7 +11,8 @@
         <record id="dr_house" model="hr.hospital.doctor">
             <field name="last_name">House</field><field name="first_name">Gregory</field>
             <field name="specialty_id" ref="spec_neurology"/><field name="license_number">LIC-777</field>
-            <field name="rating">5</field></record>
+            <field name="rating">5</field>
+        </record>
 
         <record id="dr_cuddy" model="hr.hospital.doctor">
             <field name="last_name">Cuddy</field><field name="first_name">Lisa</field>
@@ -26,10 +27,24 @@
             <field name="rating">3</field>
         </record>
 
-        <record id="dr_cameron" model="hr.hospital.doctor">
-            <field name="last_name">Cameron</field><field name="first_name">Allison</field>
-            <field name="specialty_id" ref="spec_cardiology"/><field name="license_number">LIC-002</field>
-            <field name="is_intern">True</field><field name="mentor_id" ref="dr_cuddy"/>
+        <record id="dr_foreman" model="hr.hospital.doctor">
+            <field name="last_name">Foreman</field>
+            <field name="first_name">Eric</field>
+            <field name="specialty_id" ref="spec_neurology"/>
+            <field name="license_number">LIC-1001</field>
+            <field name="rating">4.2</field>
+            <field name="is_intern">True</field>
+            <field name="mentor_id" ref="dr_house"/>
+        </record>
+
+        <record id="dr_dorian" model="hr.hospital.doctor">
+            <field name="last_name">Dorian</field>
+            <field name="first_name">John</field>
+            <field name="specialty_id" ref="spec_therapy"/>
+            <field name="license_number">LIC-1002</field>
+            <field name="rating">3.5</field>
+            <field name="is_intern">True</field>
+            <field name="mentor_id" ref="dr_cuddy"/>
         </record>
 
         <record id="dr_wilson" model="hr.hospital.doctor">
@@ -52,11 +67,37 @@
             <field name="date_of_birth">1985-05-12</field><field name="doctor_id" ref="dr_wilson"/>
         </record>
 
-        <record id="visit_1" model="hr.hospital.visit">
+        <record id="visit_demo_1" model="hr.hospital.visit">
             <field name="patient_id" ref="patient_1"/>
             <field name="doctor_id" ref="dr_house"/>
-            <field name="visit_date_planned" eval="(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="visit_date_planned" eval="(datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d 10:00:00')"/>
             <field name="state">planned</field>
+            <field name="visit_type">first</field>
+        </record>
+
+        <record id="visit_demo_2" model="hr.hospital.visit">
+            <field name="patient_id" ref="patient_2"/>
+            <field name="doctor_id" ref="dr_wilson"/>
+            <field name="visit_date_planned" eval="(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d 14:00:00')"/>
+            <field name="visit_date_actual" eval="(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d 14:05:00')"/>
+            <field name="state">done</field>
+            <field name="visit_type">preventive</field>
+        </record>
+
+        <record id="visit_demo_3" model="hr.hospital.visit">
+            <field name="patient_id" ref="patient_1"/>
+            <field name="doctor_id" ref="dr_cuddy"/>
+            <field name="visit_date_planned" eval="(datetime.now().replace(hour=9, minute=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="state">cancelled</field>
+            <field name="visit_type">repeat</field>
+        </record>
+
+        <record id="visit_demo_4" model="hr.hospital.visit">
+            <field name="patient_id" ref="patient_2"/>
+            <field name="doctor_id" ref="dr_chase"/>
+            <field name="visit_date_planned" eval="(datetime.now() + timedelta(days=5)).strftime('%Y-%m-%d 11:30:00')"/>
+            <field name="state">planned</field>
+            <field name="visit_type">urgent</field>
         </record>
 
         <record id="sched_house_mon" model="hr.hospital.doctor.schedule">
@@ -66,5 +107,65 @@
             <field name="time_end">17.0</field>
         </record>
 
+<record id="dis_viral" model="hr.hospital.disease"><field name="name">Viral Infections</field></record>
+        <record id="dis_covid19" model="hr.hospital.disease">
+            <field name="name">COVID-19</field><field name="parent_id" ref="dis_viral"/>
+            <field name="is_infectious">True</field><field name="severity">high</field>
+        </record>
+        
+        <record id="dis_bacterial" model="hr.hospital.disease"><field name="name">Bacterial Infections</field></record>
+        <record id="dis_tb" model="hr.hospital.disease">
+            <field name="name">Tuberculosis</field><field name="parent_id" ref="dis_bacterial"/>
+            <field name="is_infectious">True</field><field name="severity">critical</field>
+        </record>
+
+        <record id="visit_demo_done_1" model="hr.hospital.visit">
+            <field name="patient_id" ref="patient_1"/>
+            <field name="doctor_id" ref="dr_house"/>
+            <field name="visit_date_planned" eval="(datetime.now() - timedelta(days=35)).strftime('%Y-%m-%d 10:00:00')"/>
+            <field name="state">done</field>
+        </record>
+        <record id="visit_demo_done_2" model="hr.hospital.visit">
+            <field name="patient_id" ref="patient_2"/>
+            <field name="doctor_id" ref="dr_wilson"/>
+            <field name="visit_date_planned" eval="(datetime.now() - timedelta(days=70)).strftime('%Y-%m-%d 14:00:00')"/>
+            <field name="state">done</field>
+        </record>
+
+        <record id="diag_demo_1" model="hr.hospital.diagnosis">
+            <field name="visit_id" ref="visit_demo_2"/> <field name="disease_id" ref="dis_covid19"/>
+            <field name="date_of_diagnosis" eval="(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')"/>
+            <field name="severity">high</field>
+        </record>
+        <record id="diag_demo_2" model="hr.hospital.diagnosis">
+            <field name="visit_id" ref="visit_demo_2"/>
+            <field name="disease_id" ref="dis_tb"/>
+            <field name="date_of_diagnosis" eval="(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')"/>
+            <field name="severity">critical</field>
+        </record>
+
+        <record id="diag_demo_3" model="hr.hospital.diagnosis">
+            <field name="visit_id" ref="visit_demo_done_1"/> <field name="disease_id" ref="dis_covid19"/>
+            <field name="date_of_diagnosis" eval="(datetime.now() - timedelta(days=35)).strftime('%Y-%m-%d')"/>
+            <field name="severity">high</field>
+        </record>
+        <record id="diag_demo_4" model="hr.hospital.diagnosis">
+            <field name="visit_id" ref="visit_demo_done_1"/>
+            <field name="disease_id" ref="dis_tb"/>
+            <field name="date_of_diagnosis" eval="(datetime.now() - timedelta(days=34)).strftime('%Y-%m-%d')"/>
+            <field name="severity">severe</field>
+        </record>
+
+        <record id="diag_demo_5" model="hr.hospital.diagnosis">
+            <field name="visit_id" ref="visit_demo_done_2"/> <field name="disease_id" ref="dis_covid19"/>
+            <field name="date_of_diagnosis" eval="(datetime.now() - timedelta(days=70)).strftime('%Y-%m-%d')"/>
+            <field name="severity">high</field>
+        </record>
+        <record id="diag_demo_6" model="hr.hospital.diagnosis">
+            <field name="visit_id" ref="visit_demo_done_2"/>
+            <field name="disease_id" ref="dis_tb"/>
+            <field name="date_of_diagnosis" eval="(datetime.now() - timedelta(days=69)).strftime('%Y-%m-%d')"/>
+            <field name="severity">critical</field>
+        </record>
     </data>
 </odoo>

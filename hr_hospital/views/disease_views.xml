@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <record id="view_hr_hospital_disease_search" model="ir.ui.view">
+        <field name="name">hr.hospital.disease.search</field>
+        <field name="model">hr.hospital.disease</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="icd10_code"/>
+                
+                <filter string="Infectious" name="filter_is_infectious" domain="[('is_infectious', '=', True)]"/>
+                
+                <searchpanel>
+                    <field name="parent_id" icon="fa-folder" enable_counters="1" expand="1"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
     <record id="view_hr_hospital_disease_list" model="ir.ui.view">
         <field name="name">hr.hospital.disease.list</field>
         <field name="model">hr.hospital.disease</field>
@@ -48,5 +66,7 @@
         <field name="name">Diseases Catalog</field>
         <field name="res_model">hr.hospital.disease</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_hr_hospital_disease_search"/>
     </record>
+    
 </odoo>

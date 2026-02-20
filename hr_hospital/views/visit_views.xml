@@ -1,5 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <record id="view_hr_hospital_visit_search" model="ir.ui.view">
+        <field name="name">hr.hospital.visit.search</field>
+        <field name="model">hr.hospital.visit</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="doctor_id"/>
+                <field name="patient_id"/>
+                <field name="visit_date_planned"/>
+                
+                <filter string="Planned" name="filter_planned" domain="[('state', '=', 'planned')]"/>
+                <filter string="Done" name="filter_done" domain="[('state', '=', 'done')]"/>
+                <filter string="Cancelled" name="filter_cancelled" domain="[('state', '=', 'cancelled')]"/>
+                
+                <separator/>
+                <filter string="This Month" name="filter_this_month" 
+                        domain="[
+                            ('visit_date_planned', '&gt;=', context_today().strftime('%Y-%m-01')),
+                            ('visit_date_planned', '&lt;', (context_today() + relativedelta(months=1)).strftime('%Y-%m-01'))
+                        ]"/>
+
+                <group expand="0" string="Group By">
+                    <filter string="Doctor" name="group_by_doctor" context="{'group_by': 'doctor_id'}"/>
+                    <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="Visit Date" name="group_by_date" context="{'group_by': 'visit_date_planned:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_hr_hospital_visit_calendar" model="ir.ui.view">
+        <field name="name">hr.hospital.visit.calendar</field>
+        <field name="model">hr.hospital.visit</field>
+        <field name="arch" type="xml">
+            <calendar string="Patient Visits" 
+                      date_start="visit_date_planned" 
+                      color="doctor_id" 
+                      mode="month" 
+                      quick_create="False"
+                      event_open_popup="True">
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="visit_type"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_hr_hospital_visit_pivot" model="ir.ui.view">
+        <field name="name">hr.hospital.visit.pivot</field>
+        <field name="model">hr.hospital.visit</field>
+        <field name="arch" type="xml">
+            <pivot string="Visits Analysis" sample="1">
+                <field name="doctor_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="visit_date_planned" interval="month" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
     <record id="view_hr_hospital_visit_list" model="ir.ui.view">
         <field name="name">hr.hospital.visit.list</field>
         <field name="model">hr.hospital.visit</field>
@@ -21,7 +81,7 @@
             <form>
                 <header>
                     <button name="%(action_reschedule_visit_wizard)d" string="Reschedule" type="action" class="btn-primary" invisible="state != 'planned'"/>
-                    <field name="state" widget="statusbar" statusbar_visible="planned,done,cancelled"/>
+                    <field name="state" widget="statusbar" statusbar_visible="planned,done,cancelled" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
                     <group>
@@ -64,6 +124,9 @@
     <record id="action_hr_hospital_visit" model="ir.actions.act_window">
         <field name="name">Patient Visits</field>
         <field name="res_model">hr.hospital.visit</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list,form,calendar,pivot</field>
+        <field name="search_view_id" ref="view_hr_hospital_visit_search"/>
+        <field name="context">{'search_default_filter_this_month': 1}</field>
     </record>
+
 </odoo>

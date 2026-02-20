@@ -85,4 +85,41 @@
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
+
+    <record id="view_disease_report_wizard_form" model="ir.ui.view">
+        <field name="name">hr.hospital.disease.report.wizard.form</field>
+        <field name="model">hr.hospital.disease.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate Disease Report">
+                <sheet>
+                    <group>
+                        <group string="Filters">
+                            <field name="doctor_ids" widget="many2many_tags" placeholder="All Doctors..."/>
+                            <field name="disease_ids" widget="many2many_tags" placeholder="All Diseases..."/>
+                        </group>
+                        <group string="Period">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_print_report" string="Generate Report" type="object" class="btn-primary" icon="fa-list-alt"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_disease_report_wizard" model="ir.actions.act_window">
+        <field name="name">Disease Report</field>
+        <field name="res_model">hr.hospital.disease.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        
+        <field name="binding_model_id" ref="hr_hospital.model_hr_hospital_doctor"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="binding_type">report</field> 
+    </record>
+
 </odoo>

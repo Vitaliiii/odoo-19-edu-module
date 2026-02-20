@@ -9,18 +9,23 @@
         - Specialized wizards for data management
     """,
     'author': "Vitalii",
-    'website': '',
     'category': 'Customizations/Medical',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.0.2',
     'depends': ['base'],
     'data': [
         'security/ir.model.access.csv',
-        'views/wizard_views.xml',
+        
         'views/specialty_views.xml', 
         'views/disease_views.xml',
+        
         'views/doctor_views.xml',
         'views/patient_views.xml',
+
         'views/visit_views.xml',
+        'views/diagnosis_views.xml',
+
+        'wizard/wizard_views.xml',
+
         'views/hr_hospital_menus.xml',
     ],
     'demo': [

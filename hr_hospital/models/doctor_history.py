@@ -35,23 +35,17 @@ class HospitalPatientDoctorHistory(models.Model):
     
     @api.model_create_multi
     def create(self, vals_list):
-        """
-        Метод create в Odoo 17+ отримує список словників (vals_list).
-        Проходимо циклом по кожному словнику в списку.
-        """
-        for vals in vals_list:
-            patient_id = vals.get('patient_id')
-            if patient_id:
-
-                old_records = self.search([
-                    ('patient_id', '=', patient_id),
-                    ('active', '=', True)
-                ])
-                
-                if old_records:
-                    old_records.write({
-                        'active': False,
-                        'change_date': fields.Date.context_today(self),
-                    })
+        patient_ids = [vals.get('patient_id') for vals in vals_list if vals.get('patient_id')]
         
+        if patient_ids:
+            old_records = self.search([
+                ('patient_id', 'in', patient_ids),
+                ('active', '=', True)
+            ])
+            if old_records:
+                old_records.write({
+                    'active': False,
+                    'change_date': fields.Date.context_today(self),
+                })
+                
         return super().create(vals_list)

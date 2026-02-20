@@ -1,5 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_hr_hospital_doctor_search" model="ir.ui.view">
+        <field name="name">hr.hospital.doctor.search</field>
+        <field name="model">hr.hospital.doctor</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="specialty_id"/>
+                
+                <filter string="Mentors" name="filter_mentors" domain="[('intern_ids', '!=', False)]"/>
+                <filter string="Interns" name="filter_interns" domain="[('is_intern', '=', True)]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Specialty" name="group_specialty" context="{'group_by': 'specialty_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_hr_hospital_doctor_kanban" model="ir.ui.view">
+        <field name="name">hr.hospital.doctor.kanban</field>
+        <field name="model">hr.hospital.doctor</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="specialty_id">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="specialty_id"/>
+                <field name="rating" widget="progressbar"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_image">
+                                <img t-att-src="kanban_image('hr.hospital.doctor', 'image_128', record.id.raw_value)" alt="Doctor"/>
+                            </div>
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                <ul>
+                                    <li>Specialty: <field name="specialty_id"/></li>
+                                    <li>Rating: <field name="rating" widget="progressbar"/></li>
+                                </ul>
+                                <div class="mt-2">
+                                    <button name="action_create_visit" type="object" class="btn btn-primary btn-sm">
+                                        Schedule Visit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="view_hr_hospital_doctor_list" model="ir.ui.view">
         <field name="name">hr.hospital.doctor.list</field>
         <field name="model">hr.hospital.doctor</field>
@@ -8,7 +60,7 @@
                 <field name="name"/>
                 <field name="specialty_id"/>
                 <field name="license_number"/>
-                <field name="rating" widget="progressbar" options="{'max_value': 5}"/>
+                <field name="rating" widget="progressbar"/>
                 <field name="is_intern" widget="boolean_toggle"/>
             </list>
         </field>
@@ -36,11 +88,28 @@
                             <field name="license_number"/>
                             <field name="license_date"/>
                             <field name="experience_years"/>
+                            <field name="rating" widget="progressbar"/>
                             <field name="is_intern"/>
                             <field name="mentor_id" invisible="not is_intern" required="is_intern"/>
                         </group>
                     </group>
                     <notebook>
+                        <page string="Interns" name="interns_page" invisible="is_intern">
+                            <field name="intern_ids" mode="kanban">
+                                <kanban>
+                                    <field name="name"/>
+                                    <field name="specialty_id"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click" style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; margin-bottom: 5px;">
+                                                <strong><field name="name"/></strong>
+                                                <div class="text-muted"><field name="specialty_id"/></div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </page>
                         <page string="Schedule">
                             <field name="schedule_ids">
                                 <list editable="bottom">
@@ -61,6 +130,7 @@
     <record id="action_hr_hospital_doctor" model="ir.actions.act_window">
         <field name="name">Doctors</field>
         <field name="res_model">hr.hospital.doctor</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_hr_hospital_doctor_search"/>
     </record>
 </odoo>

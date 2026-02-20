@@ -21,10 +21,12 @@ class DoctorScheduleWizard(models.TransientModel):
         self.ensure_one()
         schedule_obj = self.env['hr.hospital.doctor.schedule']
         
+        vals_list = []
+        
         for week in range(self.weeks_count):
             for day in range(5):
                 current_date = self.week_start_date + timedelta(weeks=week, days=day)
-                schedule_obj.create({
+                vals_list.append({
                     'doctor_id': self.doctor_id.id,
                     'schedule_date': current_date,
                     'day_of_week': str(day),
@@ -32,4 +34,8 @@ class DoctorScheduleWizard(models.TransientModel):
                     'time_end': self.time_end,
                     'activity_type': self.schedule_type,
                 })
+        
+        if vals_list:
+            schedule_obj.create(vals_list)
+            
         return {'type': 'ir.actions.act_window_close'}
