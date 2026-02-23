@@ -21,11 +21,11 @@
                             ('visit_date_planned', '&lt;', (context_today() + relativedelta(months=1)).strftime('%Y-%m-01'))
                         ]"/>
 
-                <group expand="0" string="Group By">
-                    <filter string="Doctor" name="group_by_doctor" context="{'group_by': 'doctor_id'}"/>
-                    <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
-                    <filter string="Visit Date" name="group_by_date" context="{'group_by': 'visit_date_planned:day'}"/>
-                </group>
+                
+                <filter string="Doctor" name="group_by_doctor" context="{'group_by': 'doctor_id'}"/>
+                <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
+                <filter string="Visit Date" name="group_by_date" context="{'group_by': 'visit_date_planned:day'}"/>
+                
             </search>
         </field>
     </record>

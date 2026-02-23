@@ -10,10 +10,8 @@
                 <field name="phone"/>
                 <field name="doctor_id"/>
                 
-                <group expand="0" string="Group By">
-                    <filter string="Doctor" name="group_by_doctor" context="{'group_by': 'doctor_id'}"/>
-                    <filter string="Blood Type" name="group_by_blood" context="{'group_by': 'blood_type'}"/>
-                </group>
+                <filter string="Doctor" name="group_by_doctor" context="{'group_by': 'doctor_id'}"/>
+                <filter string="Blood Type" name="group_by_blood" context="{'group_by': 'blood_type'}"/>
             </search>
         </field>
     </record>
