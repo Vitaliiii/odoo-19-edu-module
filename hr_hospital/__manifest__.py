@@ -15,6 +15,8 @@
     'data': [
         'security/ir.model.access.csv',
         
+        'reports/doctor_report.xml',
+        
         'wizard/wizard_views.xml',
                 
         'views/specialty_views.xml', 

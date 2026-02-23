@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_doctor_report" model="report.paperformat">
+        <field name="name">A4 Doctor Report</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">30</field>
+        <field name="margin_bottom">20</field>
+        <field name="margin_left">15</field>
+        <field name="margin_right">15</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">25</field>
+    </record>
+
+    <record id="action_report_doctor_card" model="ir.actions.report">
+        <field name="name">Картка Лікаря (Звіт)</field>
+        <field name="model">hr.hospital.doctor</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hr_hospital.report_doctor_card_template</field>
+        <field name="report_file">hr_hospital.report_doctor_card_template</field>
+        <field name="print_report_name">'Лікар_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_hr_hospital_doctor"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_doctor_report"/>
+    </record>
+
+    <template id="report_doctor_card_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    
+                    <div class="header">
+                        <div class="row border-bottom pb-3">
+                            <div class="col-4">
+                                <img t-if="doc.env.company.logo" t-att-src="image_data_uri(doc.env.company.logo)" style="max-height: 60px;" alt="Логотип"/>
+                            </div>
+                            <div class="col-8 text-end">
+                                <strong><span t-field="doc.env.company.name"/></strong><br/>
+                                <span t-if="doc.env.company.phone"><i class="fa fa-phone"/> <span t-field="doc.env.company.phone"/> | </span>
+                                <span t-if="doc.env.company.email"><i class="fa fa-envelope"/> <span t-field="doc.env.company.email"/></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="page mt-4">
+                        <h2 class="text-center mb-4">
+                            Лікар: <span t-field="doc.name"/><br/>
+                            <small class="text-muted">Спеціальність: <span t-field="doc.specialty_id.name"/></small>
+                        </h2>
+
+                        <t t-set="visits" t-value="doc.env['hr.hospital.visit'].search([('doctor_id', '=', doc.id)], order='visit_date_planned desc')"/>
+
+                        <h4 class="mt-4">Історія візитів та список пацієнтів</h4>
+                        
+                        <table class="table table-sm table-bordered mt-2">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Дата візиту</th>
+                                    <th>ПІБ Пацієнта (1.4.1)</th>
+                                    <th>Стать (1.4.2)</th>
+                                    <th>Дата народження (1.4.3)</th>
+                                    <th>Телефон (1.4.4)</th>
+                                    <th>Статус (1.4.5)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="visits" t-as="visit">
+                                    <td><span t-field="visit.visit_date_planned"/></td>
+                                    <td><span t-field="visit.patient_id.name"/></td>
+                                    <td><span t-field="visit.patient_id.gender"/></td>
+                                    <td><span t-field="visit.patient_id.date_of_birth"/></td>
+                                    <td><span t-field="visit.patient_id.phone"/></td>
+                                    <td t-att-class="
+                                        'bg-warning text-dark text-center' if visit.state == 'planned' else
+                                        'bg-success text-white text-center' if visit.state == 'done' else
+                                        'bg-danger text-white text-center' if visit.state == 'cancelled' else 'text-center'
+                                    ">
+                                        <strong><span t-field="visit.state"/></strong>
+                                    </td>
+                                </tr>
+                                <tr t-if="not visits">
+                                    <td colspan="6" class="text-center text-muted">Історія візитів порожня.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="footer">
+                        <div class="row border-top pt-2" style="font-size: 12px;">
+                            <div class="col-6">
+                                <strong>Місто:</strong> <span t-field="doc.env.company.city"/>
+                            </div>
+                            <div class="col-6 text-end">
+                                <strong>Дата та час друку:</strong> <span t-esc="datetime.datetime.now().strftime('%d.%m.%Y %H:%M')"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
