@@ -11,6 +11,11 @@ class HospitalPatient(models.Model):
         string='Personal Doctor',
         help="Main physician responsible for this patient"
     )
+    user_id = fields.Many2one(
+        'res.users', 
+        string='System User', 
+        help='System user associated with this patient for login purposes.'
+    )
 
     passport_data = fields.Char(string='Passport Details', size=10)
     contact_person_id = fields.Many2one('hr.hospital.contact.person', string='Emergency Contact')

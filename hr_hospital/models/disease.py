@@ -11,6 +11,7 @@ class HospitalDisease(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
+        translate=True,
     )
     
     description = fields.Text(string='Description')

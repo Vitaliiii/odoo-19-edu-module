@@ -13,6 +13,7 @@
     'version': '19.0.1.0.2',
     'depends': ['base'],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         
         'reports/doctor_report.xml',
